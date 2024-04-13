@@ -1,14 +1,15 @@
-class Control {
-    constructor() {
-        this.f = false;
-        this.l = false;
-        this.r = false;
-        this.b = false;
 
-        this.#keyboard();
+class Control {
+    constructor(keyboard = false) {
+        this.f = false; // forward
+        this.b = false; // backword
+        this.r = false; // right
+        this.l = false; // left
+
+        if (keyboard) this.#keyboard_control()
     }
 
-    #keyboard() {
+    #keyboard_control() {
         document.onkeydown = (event) => {
             switch (event.key) {
                 case "ArrowUp":
@@ -25,6 +26,7 @@ class Control {
                     break;
             }
         }
+
         document.onkeyup = (event) => {
             switch (event.key) {
                 case "ArrowUp":
@@ -41,5 +43,6 @@ class Control {
                     break;
             }
         }
+
     }
 }
