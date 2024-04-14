@@ -32,14 +32,13 @@ class Sensor {
                 touches.push(touch);
             }
         }
-        
+
         if (touches.length == 0) {
             return null;
         } else {
             const offsets = touches.map(event => event.offset);
-            console.log(offsets)
             const min_offset = Math.min(...offsets);
-            return touches.find(event => { event.offset == min_offset });
+            return touches.find(event => event.offset == min_offset);
         }
     }
 
@@ -66,7 +65,6 @@ class Sensor {
             let end = this.rays[i][1];
             if (this.readings[i]) {
                 end = this.readings[i];
-                console.log(end);
             }
 
             ctx.beginPath();
