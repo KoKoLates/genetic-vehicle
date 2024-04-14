@@ -1,10 +1,15 @@
 
 class Control {
-    constructor(keyboard = false) {
+    constructor(dummy, keyboard = true) {
         this.f = false; // forward
         this.b = false; // backword
         this.r = false; // right
         this.l = false; // left
+
+        if (dummy) {
+            this.f = true;
+            return
+        }
 
         if (keyboard) this.#keyboard_control()
     }
