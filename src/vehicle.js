@@ -33,7 +33,7 @@ class Vehicle {
         if (this.sensors) {
             this.sensors.update(road_borders, traffic);
             const offsets = this.sensors.readings.map(
-                event => event == null ? 0 : 1 - event.offset
+                event => event === null ? 0 : 1 - event.offset
             );
             const output = NeuralNetwork.forward(offsets, this.network);
             
