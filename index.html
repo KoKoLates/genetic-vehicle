@@ -5,17 +5,47 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Genetic Vehicle</title>
-  <link rel="stylesheet" href="./index.css">
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: darkgray;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #button-container {
+      display: flex;
+      flex-direction: column;
+    }
+
+    button {
+      border: none;
+      border-radius: 5px;
+      padding: 5px 5px 7px 5px;
+      margin: 2px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: gray;
+    }
+
+    #canvas {
+      background: lightgray;
+    }
+  </style>
 </head>
 
 <body>
   <canvas id="canvas"></canvas>
-  <div id="btn">
+  <div id="button-container">
+    <!-- todo: remove the button block and
+    try to use keyboard or navigation bar (with hidden) -->
     <button onclick="save()">save</button>
     <button onclick="discard()">discard</button>
   </div>
-  <!-- <canvas id="networkCanvas"></canvas> -->
-  <script src="./src/visualizer.js"></script>
   <script src="./src/network.js"></script>
   <script src="./src/utils.js"></script>
   <script src="./src/road.js"></script>
