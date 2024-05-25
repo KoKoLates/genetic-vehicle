@@ -31,7 +31,7 @@ export class Road {
 
   plot(ctx) {
     ctx.lineWidth = 5;
-    ctx.strokeStyle = "white";
+    ctx.strokeStyle = "#ffffff";
 
     for (let i = 1; i < this.n; i++) {
       const x = lerp(this.l, this.r, i / this.n);
@@ -56,44 +56,22 @@ export class Road {
 }
 
 export class Traffic {
-  constructor(file_path, road) {
+  constructor(config, road) {
     this.vehicle = [];
-    this.initial = this.#initialize(file_path, road);
+    config.forEach((pose) => {
+      this.vehicle.push(new GVehicle(road.lane(pose.x), pose.y));
+    });
   }
 
-  async update() {
-    await this.initial;
+  update() {
     for (let i = 0; i < this.vehicle.length; i++) {
       this.vehicle[i].update();
     }
   }
 
-  async plot(ctx) {
-    await this.initial;
+  plot(ctx) {
     for (let i = 0; i < this.vehicle.length; i++) {
       this.vehicle[i].plot(ctx);
-    }
-  }
-
-  async vehicles() {
-    await this.initial;
-    return this.vehicle;
-  }
-
-  async #initialize(file_path, road) {
-    try {
-      const response = await fetch(file_path);
-      if (!response.ok) {
-        throw new Error(
-          `[Error] Network Response Issue: ${response.statusText}.`
-        );
-      }
-      const poses = await response.json();
-      poses.forEach((pose) => {
-        this.vehicle.push(new GVehicle(road.lane(pose.x), pose.y));
-      });
-    } catch (error) {
-      console.log(error);
     }
   }
 }

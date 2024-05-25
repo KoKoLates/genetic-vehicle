@@ -41,7 +41,7 @@ export class Vehicle {
 
   plot(ctx) {
     ctx.beginPath();
-    ctx.fillStyle = this.damaged ? "gray" : "blue";
+    ctx.fillStyle = this.damaged ? "#808080" : "blue";
     ctx.moveTo(this.polygon[0].x, this.polygon[0].y);
     this.polygon.forEach((poly) => {
       ctx.lineTo(poly.x, poly.y)

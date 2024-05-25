@@ -33,14 +33,14 @@ export class Sensor {
 
       ctx.beginPath();
       ctx.lineWidth = 2;
-      ctx.strokeStyle = "yellow";
+      ctx.strokeStyle = "#ffff00";
       ctx.moveTo(beam[0].x, beam[0].y);
       ctx.lineTo(reading.x, reading.y);
       ctx.stroke();
 
       ctx.beginPath();
       ctx.lineWidth = 2;
-      ctx.strokeStyle = "black";
+      ctx.strokeStyle = "#2e282a";
       ctx.moveTo(beam[1].x, beam[1].y);
       ctx.lineTo(reading.x, reading.y);
       ctx.stroke();
