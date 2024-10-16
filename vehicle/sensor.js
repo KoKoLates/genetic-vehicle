@@ -2,11 +2,11 @@
 import { lerp, intersect } from "../math.js";
 
 export class Sensor {
-  constructor(self, count = 5) {
+  constructor(self, count = 5, theta = 2) {
     this.self = self;
     this.count = count
     this.length = 150;
-    this.spread = Math.PI / 2;
+    this.spread = Math.PI / theta;
 
     this.beams = [];
     this.reads = [];
@@ -20,6 +20,13 @@ export class Sensor {
         this.#reading(beam, obstacles)
       );
     });
+  }
+
+  read() {
+    const offset = this.reads.map(event => 
+      event === null ? 0 : 1 - event.offset
+    );
+    return offset;
   }
 
   plot(ctx, show = false) {

@@ -1,6 +1,4 @@
-
-import { lerp } from "./math.js";
-import { GVehicle } from "./vehicle/vehicle.js";
+import { lerp } from "../math.js";
 
 export class Road {
   constructor(x, w, n = 3) {
@@ -52,26 +50,5 @@ export class Road {
       ctx.lineTo(border[1].x, border[1].y);
       ctx.stroke();
     })
-  }
-}
-
-export class Traffic {
-  constructor(config, road) {
-    this.vehicle = [];
-    config.forEach((pose) => {
-      this.vehicle.push(new GVehicle(road.lane(pose.x), pose.y));
-    });
-  }
-
-  update() {
-    for (let i = 0; i < this.vehicle.length; i++) {
-      this.vehicle[i].update();
-    }
-  }
-
-  plot(ctx) {
-    for (let i = 0; i < this.vehicle.length; i++) {
-      this.vehicle[i].plot(ctx);
-    }
   }
 }

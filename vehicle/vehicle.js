@@ -1,6 +1,8 @@
 import { Sensor } from "./sensor.js";
-import { KBC, NNC, MPC } from "./control.js"
+import { KBC, NNC, MPC, PID } from "./control.js"
 import { polygon_intersect } from "../math.js";
+
+import { NeuralNetwork } from "../network/network.js";
 
 export class Vehicle {
   constructor(x, y, control = 0) {
@@ -19,8 +21,8 @@ export class Vehicle {
 
     // status
     this.damaged = false;
-    this.sensors = new Sensor(this, 5);
     this.polygon = this.#update_polygon();
+    this.sensors = new Sensor(this);
 
     // controller type
     if (control === 0) {
@@ -28,18 +30,21 @@ export class Vehicle {
     } else {
       this.control = new NNC(this);
     }
+    // this.control = new PID(this);
+
+    // can add event listenr for sensors showup option
   }
 
   update(obstacles) {
     if (!this.damaged) {
-      this.control.update()
       this.sensors.update(obstacles);
+      this.control.update();
       this.polygon = this.#update_polygon();
       this.damaged = this.#update_damaged(obstacles);
     }
   }
 
-  plot(ctx) {
+  plot(ctx, show_sensors = true) {
     ctx.beginPath();
     ctx.fillStyle = this.damaged ? "#808080" : "blue";
     ctx.moveTo(this.polygon[0].x, this.polygon[0].y);
@@ -48,7 +53,8 @@ export class Vehicle {
     });
     ctx.fill();
 
-    this.sensors.plot(ctx, true);
+    // plot the sensors
+    this.sensors.plot(ctx, show_sensors);
   }
 
   motion() {
@@ -119,66 +125,64 @@ export class Vehicle {
   }
 }
 
-
-export class GVehicle {
-  // a class for group vehicle which consist of traffic with indicated map
-  constructor(x, y, max_speed = 3) {
-    this.x = x;
-    this.y = y;
-    this.w = 30;
-    this.h = 50;
-
-    this.angle = 0;
-    this.speed = 0;
-    this.accel = 0.25;
-    this.max_speed = max_speed;
-
-    this.polygon = this.#update_polygon();
+export class Vehicles {
+  /**
+   * The class only for genetic neural network control
+   */
+  constructor(road, n = 1, mutate = 0.5) {
+    if (n !== 1 && control !== 1) {
+      // if the generate number is lager than 1
+      // using neural network control in force
+      control = 1;
+    }
+    this.vehicles = [];
+    for (let i = 0; i < n; i++) {
+      this.vehicles.push(new Vehicle(road.lane(1), 100, 1));
+    }
+    if (control === 1 && localStorage.getItem("best")) {
+      for (let i = 0; i < this.vehicles.length; i++) {
+        this.vehicles[i].control.network = JSON.parse(
+          localStorage.getItem("best")
+        );
+        if (i !== 0) {
+          NeuralNetwork.mutate(this.vehicles[i].control.network, mutate);
+        }
+      }
+    }
+    this.best = this.vehicles[0];
   }
 
-  update() {
-    this.polygon = this.#update_polygon()
-
-    // update dynamic from simple controller
-    if (this.speed < this.max_speed) {
-      this.speed += this.accel;
+  update(obstacles) {
+    for (let i = 0; i < this.vehicles.length; i++) {
+      this.vehicles[i].update(obstacles)
     }
-
-    this.x -= Math.sin(this.angle) * this.speed;
-    this.y -= Math.cos(this.angle) * this.speed;
+    this.#find_best();
   }
 
   plot(ctx) {
-    ctx.beginPath();
-    ctx.fillStyle = "red";
-    ctx.moveTo(this.polygon[0].x, this.polygon[0].y);
-    for (let i = 0; i < this.polygon.length; i++) {
-      ctx.lineTo(this.polygon[i].x, this.polygon[i].y);
+    ctx.globalAlpha = 0.2;
+    for (let i = 0; i < this.vehicles.length; i++) {
+      this.vehicles[i].plot(ctx, false);
     }
-    ctx.fill();
+    ctx.globalAlpha = 1.0;
+    this.best.plot(ctx, true);
   }
 
-  #update_polygon() {
-    const points = [];
-    const radius = Math.hypot(this.w, this.h) / 2;
-    const rotate = Math.atan2(this.w, this.h);
+  save() {
+    localStorage.setItem("best", 
+      JSON.stringify(this.best.control.network));
+  }
 
-    points.push({
-      x: this.x - Math.sin(this.angle - rotate) * radius,
-      y: this.y - Math.cos(this.angle - rotate) * radius
-    });
-    points.push({
-      x: this.x - Math.sin(this.angle + rotate) * radius,
-      y: this.y - Math.cos(this.angle + rotate) * radius
-    });
-    points.push({
-      x: this.x - Math.sin(Math.PI + this.angle - rotate) * radius,
-      y: this.y - Math.cos(Math.PI + this.angle - rotate) * radius
-    });
-    points.push({
-      x: this.x - Math.sin(Math.PI + this.angle + rotate) * radius,
-      y: this.y - Math.cos(Math.PI + this.angle + rotate) * radius
-    });
-    return points;
+  remove() {
+    localStorage.removeItem("best");
+  }
+
+  #find_best() {
+    // minimum y and not damaged
+    this.best = this.vehicles.find(
+      (event) => event.y === Math.min(
+        ...this.vehicles.map(event => event.y)
+      ) && !event.damaged
+    );
   }
 }

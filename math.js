@@ -1,25 +1,22 @@
-
-
 /**
- * Linear interpolation
- * 
- * @param {float} a 
- * @param {float} b 
- * @param {float} t interval
- * @returns hello
+ * A basic linear interpolation
+ * @param {float} a start point
+ * @param {float} b terminate point
+ * @param {float} t weighted interval
+ * @returns the interpolated points
  */
 export function lerp(a, b, t) {
   return a + (b - a) * t;
 }
 
-
 /**
- * 
- * @param {*} a 
- * @param {*} b 
- * @param {*} c 
- * @param {*} d 
- * @returns 
+ * calculate the intersection of two lines
+ * @param {object} a line 1 start point
+ * @param {object} b line 1 terminated point
+ * @param {object} c line 2 start point
+ * @param {object} d line 2 terminated point
+ * @returns the intersect start point and terminal
+ * and the length of `non-intersected` region
  */
 export function intersect(a, b, c, d) {
   const tt_top = (d.x - c.x) * (a.y - c.y) - (d.y - c.y) * (a.x - c.x);
@@ -40,12 +37,11 @@ export function intersect(a, b, c, d) {
   return null;
 }
 
-
 /**
- * 
- * @param {*} P1 
- * @param {*} P2 
- * @returns boolean value 
+ * check two polygons (lines) are intersected or not
+ * @param {object} P1 polygon 1
+ * @param {object} P2 polygon 2
+ * @return boolean of intersected or not
  */
 export function polygon_intersect(P1, P2) {
   for (let i = 0; i < P1.length; i++) {

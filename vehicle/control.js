@@ -1,5 +1,5 @@
-
-import { NeuralNetwork } from "../network/network.js"
+import { NeuralNetwork } from "../network/network.js";
+import { Generator } from "./trajectory.js";
 
 export class NNC {
   // neural network controller
@@ -10,20 +10,43 @@ export class NNC {
     this.l = false; // left
     this.self = self;
 
+    // initialize neural network controller
     this.network = new NeuralNetwork([5, 6, 4]);
   }
 
   update() {
-    const offset = this.self.sensors.reads.map(
-      event => event === null ? 0 : 1 - event.offset
+    const offset = this.self.sensors.read();
+    const output = NeuralNetwork.forward(
+      this.network, offset
     );
-    const output = this.network.forward(offset);
 
     this.f = output[0];
     this.l = output[1];
     this.r = output[2];
     this.b = output[3];
 
+    this.self.motion();
+  }
+}
+
+export class PID {
+  constructor(self) {
+    this.f = false; // forward
+    this.b = false; // backward
+    this.r = false; // right
+    this.l = false; // left
+    this.self = self;
+
+    // PID control
+    this.Kp = 0.10;
+    this.Ki = 0.01;
+    this.kd = 0.05;
+    this.previous = [0, 0, 0, 0, 0];
+    this.integral = [0, 0, 0, 0, 0];
+  }
+
+  update() {
+    const offset = this.self.sensors.read();
     this.self.motion();
   }
 }
@@ -39,7 +62,7 @@ export class MPC {
   }
 
   update() {
-    
+
   }
 }
 
@@ -68,7 +91,7 @@ export class KBC {
   #handler(event, state) {
     const keys = {
       ArrowUp: "f",
-      ArrowDown: "b", 
+      ArrowDown: "b",
       ArrowLeft: "l",
       ArrowRight: "r"
     };

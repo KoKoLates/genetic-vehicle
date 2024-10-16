@@ -1,14 +1,22 @@
-# genetic-vehicle
-A simulation of autonomous in artificial neural network with genetic algorithm and model predictive control.
+# Genetic Vehicle 
+`genetic algorithm` 、 `neural network control`
 
-## Todo Lists
-* code refactor
-    * using `json` file to store configure, pattern (traffic) and weights
-    * current storage is on local storage, but can add on local
-    * modularize for neural network, environment (like road) and each vehicle (both main and dummy).
-* model predictive control system can be done first.
-* migration to `react.js` with node.js (not browser at all). and using typescript for more strick format (the mirgraion can be through more).
+## Overview
 
-## Reference
-* [DOM canvas]()
-* [file structure suggest](https://github.com/christopher4lis/canvas-boilerplate/tree/master/src)
+## Event Listener
+Here are define several keyboard event listener.
+* `s`: save current best weights to local storage
+* `d`: remove current local storage
+* `f`: reload the window (next generation)
+
+## Hyper-Parameters
+`index.js`
+
+other define the obstacles arragement. 
+```js
+const others = [
+  { x: 0, y: 50 }, { x: 2, y: 20 }, { x: 1, y: -110 }
+];
+```
+
+you can modify the network architecture, but note that the input layer of network should be the same as sensors number
