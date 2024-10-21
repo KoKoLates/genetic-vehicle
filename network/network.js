@@ -1,4 +1,4 @@
-import { lerp } from "../math.js";
+import { lerp } from "../utils.js";
 import { Layer } from "./layer.js";
 
 export class NeuralNetwork {

@@ -1,5 +1,5 @@
 import { Road, Traffic } from './env.js';
-import { Vehicle, GroupVehicle } from "./vehicle/vehicle.js";
+import { Vehicle } from "./vehicle/vehicle.js";
 
 import { obstacles } from './utils.js';
 
@@ -13,7 +13,7 @@ const ctx = canvas.getContext("2d");
 
 const road = new Road(canvas.width / 2, canvas.width * 0.9);
 
-const vehicle = new Vehicle(road.lane(1), 100);
+const vehicle = new Vehicle(road.lane(1), 100, 1);
 
 const others = [
   { x: 0, y: 50 }, { x: 2, y: 20 }, { x: 1, y: -110 }

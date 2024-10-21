@@ -1,4 +1,3 @@
-
 export class Layer {
   constructor(input_dims, output_dims) {
     this.dims = [input_dims, output_dims];

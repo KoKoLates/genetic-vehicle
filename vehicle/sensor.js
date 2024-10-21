@@ -1,5 +1,4 @@
-
-import { lerp, intersect } from "../math.js";
+import { lerp, intersect } from "../utils.js";
 
 export class Sensor {
   constructor(self, count = 5, theta = 2) {
@@ -54,11 +53,6 @@ export class Sensor {
     });
   }
 
-  /**
-   * 
-   * @param {Array} beam one beam in all sensors 
-   * @param {*} obstacles 
-   */
   #reading(beam, obstacles) {
     let touches = [];
     obstacles.forEach((poly) => {

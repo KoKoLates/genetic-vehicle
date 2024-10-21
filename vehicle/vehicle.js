@@ -1,7 +1,6 @@
 import { Sensor } from "./sensor.js";
-import { KBC, NNC, MPC, PID } from "./control.js"
-import { polygon_intersect } from "../math.js";
-
+import { KBC, NNC } from "./control.js";
+import { polygon_intersect } from "../utils.js";
 import { NeuralNetwork } from "../network/network.js";
 
 export class Vehicle {
@@ -29,10 +28,12 @@ export class Vehicle {
       this.control = new KBC(this);
     } else {
       this.control = new NNC(this);
+      if (localStorage.getItem("best")) {
+        this.control.network = JSON.parse(
+          localStorage.getItem("best")
+        );
+      }
     }
-    // this.control = new PID(this);
-
-    // can add event listenr for sensors showup option
   }
 
   update(obstacles) {
@@ -125,25 +126,14 @@ export class Vehicle {
   }
 }
 
-export class Vehicles {
-  /**
-   * The class only for genetic neural network control
-   */
+export class GroupVehicle {
   constructor(road, n = 1, mutate = 0.5) {
-    if (n !== 1 && control !== 1) {
-      // if the generate number is lager than 1
-      // using neural network control in force
-      control = 1;
-    }
     this.vehicles = [];
     for (let i = 0; i < n; i++) {
       this.vehicles.push(new Vehicle(road.lane(1), 100, 1));
     }
-    if (control === 1 && localStorage.getItem("best")) {
+    if (localStorage.getItem("best")) {
       for (let i = 0; i < this.vehicles.length; i++) {
-        this.vehicles[i].control.network = JSON.parse(
-          localStorage.getItem("best")
-        );
         if (i !== 0) {
           NeuralNetwork.mutate(this.vehicles[i].control.network, mutate);
         }
@@ -156,7 +146,7 @@ export class Vehicles {
     for (let i = 0; i < this.vehicles.length; i++) {
       this.vehicles[i].update(obstacles)
     }
-    this.#find_best();
+    this.#optimal();
   }
 
   plot(ctx) {
@@ -177,12 +167,12 @@ export class Vehicles {
     localStorage.removeItem("best");
   }
 
-  #find_best() {
+  #optimal() {
     // minimum y and not damaged
     this.best = this.vehicles.find(
       (event) => event.y === Math.min(
         ...this.vehicles.map(event => event.y)
-      ) && !event.damaged
+      ) 
     );
   }
 }
