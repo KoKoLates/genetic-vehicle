@@ -1,0 +1,12 @@
+body {
+  margin: 0;
+  overflow: hidden;
+  background: darkgray;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.canvas {
+  background: lightgray;
+}
