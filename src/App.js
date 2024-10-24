@@ -23,8 +23,8 @@ const App = () => {
       ctx.save();
       ctx.translate(0, -vehicle.y + canvas.height * 0.7);
 
-      vehicle.plot(ctx);
       highway.plot(ctx);
+      vehicle.plot(ctx);
 
       ctx.restore();
       requestAnimationFrame(threading);
