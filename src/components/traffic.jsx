@@ -10,14 +10,14 @@ class Other {
     this.accel = 0.25;
     this.maxSpeed = maxSpeed;
 
-    this.polygon = this.updatePolygon();
+    this.polygon = this.update_polygon();
   }
 
   update() {
     if (this.speed < this.maxSpeed) this.speed += this.accel;
     this.x -= Math.sin(this.angle) * this.speed;
     this.y -= Math.cos(this.angle) * this.speed;
-    this.polygon = this.updatePolygon();
+    this.polygon = this.update_polygon();
   }
 
   plot(ctx) {
@@ -28,18 +28,32 @@ class Other {
     ctx.fill();
   }
 
-  updatePolygon() {
+  update_polygon() {
     const radius = Math.hypot(this.w, this.h) / 2;
     const rotate = Math.atan2(this.w, this.h);
-    const points = [1, -1].flatMap(sign => [
-      { x: this.x - Math.sin(this.angle + sign * rotate) * radius, y: this.y - Math.cos(this.angle + sign * rotate) * radius },
-      { x: this.x - Math.sin(Math.PI + this.angle + sign * rotate) * radius, y: this.y - Math.cos(Math.PI + this.angle + sign * rotate) * radius }
-    ]);
-    return points;
+
+    return [
+      {
+        x: this.x - Math.sin(this.angle - rotate) * radius,
+        y: this.y - Math.cos(this.angle - rotate) * radius
+      },
+      {
+        x: this.x - Math.sin(this.angle + rotate) * radius,
+        y: this.y - Math.cos(this.angle + rotate) * radius
+      },
+      {
+        x: this.x - Math.sin(Math.PI + this.angle - rotate) * radius,
+        y: this.y - Math.cos(Math.PI + this.angle - rotate) * radius
+      },
+      {
+        x: this.x - Math.sin(Math.PI + this.angle + rotate) * radius,
+        y: this.y - Math.cos(Math.PI + this.angle + rotate) * radius
+      }
+    ];
   }
 }
 
-class Traffic {
+export default class Traffic {
   constructor(config, highway) {
     this.vehicle = config.map(pose => new Other(highway.lane(pose.x), pose.y));
   }
@@ -50,5 +64,14 @@ class Traffic {
 
   plot(ctx) {
     this.vehicle.forEach(vehicle => vehicle.plot(ctx));
+  }
+
+  obstacles(highway) {
+    return [
+      ...highway.borders,
+      ...this.vehicle.flatMap(vehicle =>
+        vehicle.polygon.map((poly, i) => [poly, vehicle.polygon[(i + 1) % vehicle.polygon.length]])
+      )
+    ];
   }
 }
