@@ -23,19 +23,15 @@ export function intersect(p1, p2, p3, p4) {
   return null;
 }
 
-export function distance(p1, p2) {
-  return Math.hypot(p2.x - p1.x, p2.y - p1.y);
-}
-
-export function collision(point, polygon) {
-  let col = false;
-  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-    const xi = polygon[i].x, yi = polygon[i].y;
-    const xj = polygon[j].x, yj = polygon[j].y;
-    const intersect = (yi > point.y) !== (yj > point.y) &&
-      (point.x < (xj - xi) * (point.y - yi) / (yj - yi) + xi);
-
-    if (intersect) col = !col;
+export function collision(P1, P2) {
+  for (let i = 0; i < P1.length; i++) {
+    for (let j = 0; j < P2.length; j++) {
+      const touch = intersect(
+        P1[i], P1[(i + 1) % P1.length],
+        P2[i], P2[(i + 1) % P2.length],
+      );
+      if (touch) return true;
+    }
   }
-  return col;
+  return false;
 }
