@@ -1,41 +1,29 @@
 import { lerp, intersect } from "../utils/utils";
 
-export default class Sensor {
+class Sensor {
   constructor(self, count = 5, theta = 2) {
     this.self = self;
     this.count = count
-    this.length = 150;
-    this.spread = Math.PI / theta;
-
     this.beams = [];
     this.reads = [];
+    this.length = 150;
+    this.spread = Math.PI / theta;
   }
 
   update(obstacles) {
-    this.#update_beams();
-    this.reads = []; // clean
-    this.beams.forEach((beam) => {
-      this.reads.push(
-        this.#reading(beam, obstacles)
-      );
-    });
+    this.update_beams();
+    this.reads = this.beams.map((beam) => this.reading(beam, obstacles));
   }
 
   read() {
-    const offset = this.reads.map(event =>
-      event === null ? 0 : 1 - event.offset
-    );
-    return offset;
+    return this.reads.map(event => (event ? 1 - event.offset : 0));
   }
 
   plot(ctx, show = false) {
     if (!show) return
 
     this.beams.forEach((beam, index) => {
-      let reading = beam[1];
-      if (this.reads[index]) {
-        reading = this.reads[index]
-      }
+      const reading = this.reads[index] || beam[1];
 
       ctx.beginPath();
       ctx.lineWidth = 2;
@@ -53,27 +41,21 @@ export default class Sensor {
     });
   }
 
-  #reading(beam, obstacles) {
-    let touches = [];
-    obstacles.forEach((poly) => {
-      const touch = intersect(
-        beam[0], beam[1], poly[0], poly[1]
-      );
-      if (touch) {
-        touches.push(touch);
-      }
+  reading(beam, obstacles) {
+    const touches = obstacles.flatMap(poly => {
+      const touch = intersect(beam[0], beam[1], poly[0], poly[1]);
+      return touch ? [touch] : [];
     });
-    if (touches.length !== 0) {
-      const offset = touches.map(event => event.offset);
-      const minima = Math.min(...offset);
-      return touches.find(event => event.offset === minima);
-    }
-    return null;
+
+    if (touches.length === 0) return null;
+
+    return touches.reduce((closest, touch) =>
+      touch.offset < closest.offset ? touch : closest
+    );
   }
 
-  #update_beams() {
-    this.beams = [];
-    for (let i = 0; i < this.count; i++) {
+  update_beams() {
+    this.beams = Array.from({ length: this.count }, (_, i) => {
       const angle = lerp(
         this.spread / 2, -this.spread / 2,
         this.count === 1 ? 0.5 : i / (this.count - 1)
@@ -84,7 +66,10 @@ export default class Sensor {
         x: this.self.x - Math.sin(angle) * this.length,
         y: this.self.y - Math.cos(angle) * this.length
       };
-      this.beams.push([v1, v2]);
-    }
+
+      return [v1, v2];
+    });
   }
 }
+
+export default Sensor;

@@ -1,32 +1,31 @@
-export default class KBC {
+class User {
   constructor(self) {
-    this.f = false; // forward
-    this.b = false; // backward
-    this.r = false; // right
-    this.l = false; // left
     this.self = self;
+    this.r = false;
+    this.l = false; 
+    this.f = false;
+    this.b = false;
 
-    // keyboard event handler
-    document.onkeyup = (event) => {
-      this.#handler(event, false);
-    }
-    document.onkeydown = (event) => {
-      this.#handler(event, true);
-    }
+    ['keyup', 'keydown'].forEach(event_type => {
+      document.addEventListener(event_type, (event) => {
+        this.handler(event, event_type === 'keydown');
+      });
+    });
+  }
+  
+  handler(event, state) {
+    const keys = {
+      ArrowLeft: "l",
+      ArrowRight: "r",
+      ArrowUp: "f",
+      ArrowDown: "b",
+    };
+    this[keys[event.key]] = state;
   }
 
   update() {
     this.self.motion();
   }
-
-  #handler(event, state) {
-    const keys = {
-      ArrowUp: "f",
-      ArrowDown: "b",
-      ArrowLeft: "l",
-      ArrowRight: "r"
-    };
-
-    this[keys[event.key]] = state;
-  }
 }
+
+export default User;

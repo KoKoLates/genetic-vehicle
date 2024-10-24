@@ -2,22 +2,17 @@ export default class Highway {
   constructor(x, w, n = 3) {
     this.x = x;
     this.w = w;
-    this.n = n; // lane number
+    this.n = n;
 
     this.l = x - w / 2; // left
     this.r = x + w / 2; // right
     this.t = -100000;   // top
     this.b = 100000;    // bottom
 
-    const v1 = { x: this.l, y: this.t }; // top left
-    const v2 = { x: this.r, y: this.t }; // top right
-    const v3 = { x: this.l, y: this.b }; // bottom left
-    const v4 = { x: this.r, y: this.b }; // bottom right
-
     this.borders = [
-      [v1, v3] /** left border */,
-      [v2, v4] /** right border */
-    ]
+      [{ x: this.l, y: this.t }, { x: this.l, y: this.b }], // left border
+      [{ x: this.r, y: this.t }, { x: this.r, y: this.b }]  // right border
+    ];
   }
 
   lane(index) {

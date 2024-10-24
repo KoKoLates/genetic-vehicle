@@ -11,9 +11,8 @@ const App = () => {
     canvas.width = 200;
     canvas.height = window.innerHeight;
 
-    let highway = new Highway(canvas.width / 2, canvas.width * 0.9, 3);
-    // highwayRef.current = highway;
-    let vehicle = new Vehicle(highway.lane(1), 500);
+    const highway = new Highway(canvas.width / 2, canvas.width * 0.9, 3);
+    const vehicle = new Vehicle(highway.lane(1), 500);
 
     const threading = () => {
       canvas.height = window.innerHeight;
@@ -24,7 +23,7 @@ const App = () => {
       ctx.translate(0, -vehicle.y + canvas.height * 0.7);
 
       highway.plot(ctx);
-      vehicle.plot(ctx);
+      vehicle.plot(ctx, true);
 
       ctx.restore();
       requestAnimationFrame(threading);
