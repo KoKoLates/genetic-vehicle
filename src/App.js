@@ -2,6 +2,8 @@ import { useEffect, useRef } from "react";
 import Highway from "./components/highway";
 import Vehicle from "./components/vehicle";
 
+import { load_traffic } from "./components/traffic";
+
 const App = () => {
   const canvasRef = useRef(null);
 
@@ -13,6 +15,7 @@ const App = () => {
 
     const highway = new Highway(canvas.width / 2, canvas.width * 0.9, 3);
     const vehicle = new Vehicle(highway.lane(1), 500);
+    const traffic = load_traffic("./config/map.json", highway);
 
     const threading = () => {
       canvas.height = window.innerHeight;
