@@ -1,10 +1,10 @@
-import User from "./control"
+import NNC from "./control"
 import Sensor from "./sensor";
 
 import { collision } from "../utils/utils";
 
 export default class Vehicle {
-  constructor(x, y, control = 0) {
+  constructor(x, y) {
     // dimensions
     this.x = x;   // position x
     this.y = y;   // position y
@@ -21,8 +21,11 @@ export default class Vehicle {
     // status
     this.damaged = false;
     this.polygon = this.update_polygon();
-    this.control = new User(this);
     this.sensors = new Sensor(this);
+    this.control = new NNC(this);
+    if (localStorage.getItem("optimal")) {
+      this.control.network = JSON.parse(localStorage.getItem("optimal"));
+    }
   }
 
   update(obstacles) {
