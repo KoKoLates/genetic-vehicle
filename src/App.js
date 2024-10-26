@@ -1,10 +1,8 @@
 import { useEffect, useRef } from "react";
 
-import Highway from "./components/highway";
-// import Vehicle from "./components/vehicles";
-import Traffic from "./components/traffic";
-
 import Epoch from "./components/epoch";
+import Highway from "./components/highway";
+import Traffic from "./components/traffic";
 
 const App = () => {
   const canvasRef = useRef(null);
@@ -16,14 +14,13 @@ const App = () => {
     canvas.height = window.innerHeight;
 
     const highway = new Highway(canvas.width / 2, canvas.width * 0.9, 3);
-    // const vehicles = new Vehicle(highway.lane(1), 500);
-    const vehicles = new Epoch(highway, 100, 0.1);
+    const vehicles = new Epoch(highway, 1, 0.1);
 
     const others = [
-      { x: 0, y: 50 }, { x: 2, y: 20 }, { x: 1, y: -130 },
-      { x: 0, y: -110 }, { x: 2, y: -310 },
-      { x: 0, y: -470 }, { x: 1, y: -500 },
-      { x: 2, y: -675 }, { x: 1, y: -750 }
+      { x: 0, y: 50 }, { x: 2, y: 20 }, 
+      { x: 1, y: -130 }, { x: 0, y: -110 }, 
+      { x: 2, y: -310 }, { x: 0, y: -470 },
+      { x: 1, y: -500 }, { x: 2, y: -675 },
     ]
     const traffic = new Traffic(others, highway);
 
@@ -49,7 +46,6 @@ const App = () => {
       vehicles.update(traffic.obstacles(highway));
 
       ctx.save();
-      // ctx.translate(0, -vehicles.y + canvas.height * 0.7);
       ctx.translate(0, -vehicles.optimal.y + canvas.height * 0.7);
 
       highway.plot(ctx);
